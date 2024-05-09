@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lido Subgraph Query</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Lido Subgraph Query</h1>
+
+    <!-- Display lidoConfigs data -->
+    <h2>Lido Configs</h2>
+    <div id="lidoConfigs-container"></div>
+
+    <!-- Display lidoTransfers data -->
+    <h2>Lido Transfers</h2>
+    <div id="lidoTransfers-container"></div>
+
+    <script>
+      // Fetch data from the server
+      fetch("/query")
+        .then((response) => response.json())
+        .then((data) => {
+          // Display lidoConfigs data
+          console.log(data.data);
+          const lidoConfigsContainer = document.getElementById(
+            "lidoConfigs-container"
+          );
+          displayData(lidoConfigsContainer, data.data.lidoConfigs);
+
+          // Display lidoTransfers data
+          const lidoTransfersContainer = document.getElementById(
+            "lidoTransfers-container"
+          );
+          displayData(lidoTransfersContainer, data.data.lidoTransfers);
+        })
+        .catch((error) => console.error("Error:", error));
+
+      // Function to display data in a table
+      function displayData(container, dataArray) {
+        if (dataArray && dataArray.length > 0) {
+          const table = document.createElement("table");
+          const headers = Object.keys(dataArray[0]);
+
+          // Create table header row
+          const headerRow = document.createElement("tr");
+          headers.forEach((header) => {
+            const th = document.createElement("th");
+            th.textContent = header.toUpperCase();
+            headerRow.appendChild(th);
+          });
+          table.appendChild(headerRow);
+
+          // Create table rows
+          dataArray.forEach((item) => {
+            const row = document.createElement("tr");
+            headers.forEach((header) => {
+              const td = document.createElement("td");
+              td.textContent = item[header];
+              row.appendChild(td);
+            });
+            table.appendChild(row);
+          });
+
+          container.appendChild(table);
+        } else {
+          container.textContent = "No data available";
+        }
+      }
+    </script>
+  </body>
+</html>
